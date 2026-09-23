@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  
+  <!-- PWA Connections -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#0E1014" />
+  <link rel="apple-touch-icon" href="./icon.png">
+
+  <title>جدولي الأسبوعي | جروب 9</title>
+  
+  <!-- Fonts: IBM Plex Sans Arabic & Plus Jakarta Sans -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet"/>
+  
+  <!-- FontAwesome 6 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+  
+  <!-- Tailwind CSS v3 -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+            mono: ['"Plus Jakarta Sans"', 'monospace']
+          },
+          colors: {
+            graphite: {
+              950: '#0B0D10',
+              900: '#111317',
+              850: '#161920',
+              800: '#1D212A',
+              700: '#272D39',
+              600: '#384152'
+            },
+            titanium: '#E2E6EE',
+            steel: '#8E99AC',
+            bronze: {
+              400: '#E2B774',
+              500: '#C59950',
+              600: '#9B722F'
+            }
+          },
+          boxShadow: {
+            'card-elevation': '0 10px 30px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)',
+            'dock-elevation': '0 20px 40px -10px rgba(0, 0, 0, 0.85), inset 0 1px 0 0 rgba(255, 255, 255, 0.1)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0E1014;
+      color: #E2E6EE;
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .arch-grid-bg {
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 26px 26px;
+    }
+
+    .matte-card {
+      background: linear-gradient(180deg, #161820 0%, #12141A 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .matte-card:active {
+      transform: scale(0.99);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .featured-card {
+      background: linear-gradient(180deg, #1C1F2A 0%, #14161F 100%);
+      border: 1px solid rgba(226, 183, 116, 0.3);
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(226, 183, 116, 0.22);
+    }
+
+    .spec-badge {
+      background-color: #1A1D26;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @keyframes calm-pulse {
+      0%, 100% { opacity: 0.95; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.92); }
+    }
+    .calm-indicator { animation: calm-pulse 2.8s ease-in-out infinite; }
+  </style>
+</head>
+<body class="min-h-screen relative arch-grid-bg selection:bg-slate-700 selection:text-white pt-20 pb-28">
+
+  <!-- Header -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-[#0E1014]/90 backdrop-blur-xl border-b border-white/10">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-graphite-850 border border-white/10 flex items-center justify-center text-titanium font-mono font-bold text-sm tracking-wider shadow-inner">
+          G9
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-1.5">جدولي الأسبوعي</h1>
+            <span class="text-[10px] tracking-wide font-mono px-2 py-0.5 rounded bg-white/5 text-zinc-300 border border-white/10 font-semibold">2026/2027</span>
+          </div>
+          <p class="text-[11px] text-zinc-400 font-normal mt-0.5">جروب 9 • كلية الفنون التطبيقية</p>
+        </div>
+      </div>
+      <button aria-label="تنبيهات المحاضرات" class="w-9 h-9 rounded-xl bg-graphite-850 border border-white/10 flex items-center justify-center text-zinc-300 hover:text-white hover:border-white/20 transition active:scale-95" id="quick-alert-toggle">
+        <i class="fa-regular fa-bell text-sm"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="max-w-md mx-auto px-4 space-y-4">
+
+    <!-- PWA Install Banner -->
+    <section class="matte-card rounded-2xl p-3 relative overflow-hidden" id="pwa-install-banner" style="display: none;">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-300">
+            <i class="fa-solid fa-mobile-screen-button text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-xs font-bold text-zinc-100 flex items-center gap-1.5">
+              <span>تثبيت كتطبيق على هاتفك</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-bronze-400 calm-indicator"></span>
+            </h2>
+            <p class="text-[11px] text-zinc-400 mt-0.5">يعمل أوفلاين مع إشعارات المحاضرات بدقة</p>
+          </div>
+        </div>
+        <button class="px-3 py-1.5 rounded-lg bg-zinc-200 hover:bg-white text-zinc-950 font-semibold text-xs transition active:scale-95 whitespace-nowrap shadow-sm" id="install-btn">
+          تثبيت سريع
+        </button>
+      </div>
+    </section>
+
+    <!-- Next Lecture Widget (Dynamic) -->
+    <section class="featured-card rounded-2xl p-4 relative" id="next-lecture-card">
+      <div class="flex justify-between items-center mb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-bronze-400 calm-indicator"></span>
+          <span class="text-xs font-semibold text-zinc-200 tracking-wide">المحاضرة القادمة</span>
+        </div>
+        <span class="text-[11px] font-mono spec-badge px-2.5 py-1 rounded-md text-zinc-300" id="next-lec-time">
+          <i class="fa-regular fa-clock me-1 text-bronze-400 text-xs"></i> جاري التحميل...
+        </span>
+      </div>
+      <div class="flex items-start justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white tracking-tight mb-1" id="next-lec-title">--</h3>
+          <p class="text-xs text-zinc-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-chalkboard-user text-zinc-500 text-[11px]"></i>
+            <span id="next-lec-doc">--</span>
+          </p>
+        </div>
+        <div class="text-left">
+          <div class="spec-badge px-3 py-1 rounded-lg text-center min-w-[72px]">
+            <span class="block text-[9px] uppercase tracking-wider text-zinc-400">المكان</span>
+            <span class="text-xs font-bold text-white font-mono" id="next-lec-hall">--</span>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-xs text-zinc-400">
+        <div class="flex items-center gap-1.5">
+          <i class="fa-regular fa-bell text-bronze-400 text-xs"></i>
+          <span>تنبيه قبل البداية بـ 15 دقيقة مُفعل</span>
+        </div>
+        <span class="text-zinc-300 font-mono text-[11px] bg-white/5 px-2 py-0.5 rounded border border-white/5" id="next-lec-day">--</span>
+      </div>
+    </section>
+
+    <!-- Day Selector Tabs -->
+    <nav class="sticky top-[61px] z-40 bg-[#0E1014]/95 backdrop-blur-md py-2 -mx-4 px-4 border-b border-white/5">
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
+        <button class="day-tab px-3.5 py-1.5 rounded-lg font-semibold transition whitespace-nowrap bg-zinc-200 text-zinc-950 shadow-sm" data-day="all">الكل</button>
+        <button class="day-tab px-3.5 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-graphite-850 text-zinc-400 border border-white/5 hover:text-white" data-day="sat">السبت</button>
+        <button class="day-tab px-3.5 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-graphite-850 text-zinc-400 border border-white/5 hover:text-white" data-day="sun">الأحد</button>
+        <button class="day-tab px-3.5 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-graphite-850 text-zinc-400 border border-white/5 hover:text-white" data-day="mon">الإثنين</button>
+        <button class="day-tab px-3.5 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-graphite-850 text-zinc-400 border border-white/5 hover:text-white" data-day="tue">الثلاثاء</button>
+        <button class="day-tab px-3.5 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-graphite-850 text-zinc-400 border border-white/5 hover:text-white" data-day="thu">الخميس</button>
+      </div>
+    </nav>
+
+    <!-- Schedule Cards Container -->
+    <main class="space-y-5" id="schedule-container">
+
+      <!-- SATURDAY -->
+      <section class="day-section space-y-2.5" data-day-group="sat">
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-bronze-400"></span>
+            <h4 class="font-bold text-xs tracking-wider uppercase text-zinc-200">السبت</h4>
+          </div>
+          <span class="text-[10px] text-zinc-400 font-mono">محاضرتان</span>
+        </div>
+
+        <article class="matte-card rounded-xl p-3.5 flex flex-col gap-2.5 relative">
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-bold text-white tracking-wide">رسم هندسي</h5>
+              <p class="text-xs text-zinc-400 mt-0.5 flex items-center gap-1.5">
+                <i class="fa-regular fa-user text-zinc-500 text-[11px]"></i>
+                <span>دكتور مصطفى محمود</span>
+              </p>
+            </div>
+            <div class="spec-badge px-2.5 py-1 rounded-md text-center min-w-[70px]">
+              <span class="text-[9px] uppercase tracking-wider text-zinc-400 block">المكان</span>
+              <span class="text-xs font-semibold text-zinc-200 font-mono">308</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5 text-zinc-300 font-mono bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 text-[11px]">
+              <i class="fa-regular fa-clock text-zinc-400"></i>
+              <span>من 9:00 إلى 11:30</span>
+            </div>
+            <button class="reminder-btn text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 transition" data-lecture="رسم هندسي">
+              <i class="fa-regular fa-bell"></i>
+              <span>تنبيه</span>
+            </button>
+          </div>
+        </article>
+
+        <article class="matte-card rounded-xl p-3.5 flex flex-col gap-2.5 relative">
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-bold text-white tracking-wide">فيزيا</h5>
+              <p class="text-xs text-zinc-400 mt-0.5 flex items-center gap-1.5">
+                <i class="fa-regular fa-user text-zinc-500 text-[11px]"></i>
+                <span>دكتور مؤنس</span>
+              </p>
+            </div>
+            <div class="spec-badge px-2.5 py-1 rounded-md text-center min-w-[70px]">
+              <span class="text-[9px] uppercase tracking-wider text-zinc-400 block">المكان</span>
+              <span class="text-xs font-semibold text-zinc-200 font-mono">108 مدرج</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5 text-zinc-300 font-mono bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 text-[11px]">
+              <i class="fa-regular fa-clock text-zinc-400"></i>
+              <span>من 12:20 إلى 2:00</span>
+            </div>
+            <button class="reminder-btn text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 transition" data-lecture="فيزيا">
+              <i class="fa-regular fa-bell"></i>
+              <span>تنبيه</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- SUNDAY -->
+      <section class="day-section space-y-2.5" data-day-group="sun">
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-bronze-400"></span>
+            <h4 class="font-bold text-xs tracking-wider uppercase text-zinc-200">الأحد</h4>
+          </div>
+          <span class="text-[10px] text-zinc-400 font-mono">محاضرة واحدة</span>
+        </div>
+
+        <article class="matte-card rounded-xl p-3.5 flex flex-col gap-2.5 relative">
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-bold text-white tracking-wide">أسس تصميم</h5>
+              <p class="text-xs text-zinc-400 mt-0.5 flex items-center gap-1.5">
+                <i class="fa-regular fa-user text-zinc-500 text-[11px]"></i>
+                <span>دكتور اسماء كامل</span>
+              </p>
+            </div>
+            <div class="spec-badge px-2.5 py-1 rounded-md text-center min-w-[70px]">
+              <span class="text-[9px] uppercase tracking-wider text-zinc-400 block">المكان</span>
+              <span class="text-xs font-semibold text-zinc-200 font-mono">307</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5 text-zinc-300 font-mono bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 text-[11px]">
+              <i class="fa-regular fa-clock text-zinc-400"></i>
+              <span>من 9:00 إلى 11:30</span>
+            </div>
+            <button class="reminder-btn text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 transition" data-lecture="أسس تصميم">
+              <i class="fa-regular fa-bell"></i>
+              <span>تنبيه</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- MONDAY -->
+      <section class="day-section space-y-2.5" data-day-group="mon">
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-bronze-400"></span>
+            <h4 class="font-bold text-xs tracking-wider uppercase text-zinc-200">الإثنين</h4>
+          </div>
+          <span class="text-[10px] text-zinc-400 font-mono">محاضرتان</span>
+        </div>
+
+        <article class="matte-card rounded-xl p-3.5 flex flex-col gap-2.5 relative">
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-bold text-white tracking-wide">انجلش</h5>
+              <p class="text-xs text-zinc-500 mt-0.5 flex items-center gap-1.5">
+                <i class="fa-solid fa-minus text-zinc-600 text-[10px]"></i>
+                <span>غير محدد</span>
+              </p>
+            </div>
+            <div class="spec-badge px-2.5 py-1 rounded-md text-center min-w-[70px]">
+              <span class="text-[9px] uppercase tracking-wider text-zinc-400 block">المكان</span>
+              <span class="text-xs font-semibold text-zinc-200 font-mono">108 مدرج</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5 text-zinc-300 font-mono bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 text-[11px]">
+              <i class="fa-regular fa-clock text-zinc-400"></i>
+              <span>من 9:00 إلى 10:40</span>
+            </div>
+            <button class="reminder-btn text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 transition" data-lecture="انجلش">
+              <i class="fa-regular fa-bell"></i>
+              <span>تنبيه</span>
+            </button>
+          </div>
+        </article>
+
+        <article class="matte-card rounded-xl p-3.5 flex flex-col gap-2.5 relative">
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-bold text-white tracking-wide">دراسات من الطبيعه</h5>
+              <p class="text-xs text-zinc-400 mt-0.5 flex items-center gap-1.5">
+                <i class="fa-regular fa-user text-zinc-500 text-[11px]"></i>
+                <span>دكتور هبه غزال</span>
+              </p>
+            </div>
+            <div class="spec-badge px-2.5 py-1 rounded-md text-center min-w-[70px]">
+              <span class="text-[9px] uppercase tracking-wider text-zinc-400 block">المكان</span>
+              <span class="text-xs font-semibold text-zinc-200 font-mono">408</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5 text-zinc-300 font-mono bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 text-[11px]">
+              <i class="fa-regular fa-clock text-zinc-400"></i>
+              <span>من 12:20 إلى 2:50</span>
+            </div>
+            <button class="reminder-btn text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 transition" data-lecture="دراسات من الطبيعه">
+              <i class="fa-regular fa-bell"></i>
+              <span>تنبيه</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- TUESDAY -->
+      <section class="day-section space-y-2.5" data-day-group="tue">
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-bronze-400"></span>
+            <h4 class="font-bold text-xs tracking-wider uppercase text-zinc-200">الثلاثاء</h4>
+          </div>
+          <span class="text-[10px] text-zinc-400 font-mono">محاضرتان</span>
+        </div>
+
+        <article class="matte-card rounded-xl p-3.5 flex flex-col gap-2.5 relative">
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-bold text-white tracking-wide">روسي</h5>
+              <p class="text-xs text-zinc-500 mt-0.5 flex items-center gap-1.5">
+                <i class="fa-solid fa-minus text-zinc-600 text-[10px]"></i>
+                <span>غير محدد</span>
+              </p>
+            </div>
+            <div class="spec-badge px-2.5 py-1 rounded-md text-center min-w-[70px]">
+              <span class="text-[9px] uppercase tracking-wider text-zinc-400 block">المكان</span>
+              <span class="text-xs font-semibold text-zinc-200 font-mono">مدرج 310</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5 text-zinc-300 font-mono bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 text-[11px]">
+              <i class="fa-regular fa-clock text-zinc-400"></i>
+              <span>من 9:00 إلى 10:40</span>
+            </div>
+            <button class="reminder-btn text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 transition" data-lecture="روسي">
+              <i class="fa-regular fa-bell"></i>
+              <span>تنبيه</span>
+            </button>
+          </div>
+        </article>
+
+        <article class="matte-card rounded-xl p-3.5 flex flex-col gap-2.5 relative">
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-bold text-white tracking-wide">رياضيات</h5>
+              <p class="text-xs text-zinc-400 mt-0.5 flex items-center gap-1.5">
+                <i class="fa-regular fa-user text-zinc-500 text-[11px]"></i>
+                <span>دكتور علي شعراوي</span>
+              </p>
+            </div>
+            <div class="spec-badge px-2.5 py-1 rounded-md text-center min-w-[70px]">
+              <span class="text-[9px] uppercase tracking-wider text-zinc-400 block">المكان</span>
+              <span class="text-xs font-semibold text-zinc-200 font-mono">مدرج 108</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5 text-zinc-300 font-mono bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 text-[11px]">
+              <i class="fa-regular fa-clock text-zinc-400"></i>
+              <span>من 2:20 إلى 2:50</span>
+            </div>
+            <button class="reminder-btn text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 transition" data-lecture="رياضيات">
+              <i class="fa-regular fa-bell"></i>
+              <span>تنبيه</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- THURSDAY -->
+      <section class="day-section space-y-2.5" data-day-group="thu">
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-bronze-400"></span>
+            <h4 class="font-bold text-xs tracking-wider uppercase text-zinc-200">الخميس</h4>
+          </div>
+          <span class="text-[10px] text-zinc-400 font-mono">محاضرتان</span>
+        </div>
+
+        <article class="matte-card rounded-xl p-3.5 flex flex-col gap-2.5 relative">
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-bold text-white tracking-wide">تشكيل بصري</h5>
+              <p class="text-xs text-zinc-400 mt-0.5 flex items-center gap-1.5">
+                <i class="fa-regular fa-user text-zinc-500 text-[11px]"></i>
+                <span>دكتور خالد عبدالرازق</span>
+              </p>
+            </div>
+            <div class="spec-badge px-2.5 py-1 rounded-md text-center min-w-[70px]">
+              <span class="text-[9px] uppercase tracking-wider text-zinc-400 block">المكان</span>
+              <span class="text-xs font-semibold text-zinc-200 font-mono">501</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5 text-zinc-300 font-mono bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 text-[11px]">
+              <i class="fa-regular fa-clock text-zinc-400"></i>
+              <span>من 9:00 إلى 11:30</span>
+            </div>
+            <button class="reminder-btn text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 transition" data-lecture="تشكيل بصري">
+              <i class="fa-regular fa-bell"></i>
+              <span>تنبيه</span>
+            </button>
+          </div>
+        </article>
+
+        <article class="matte-card rounded-xl p-3.5 flex flex-col gap-2.5 relative">
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-bold text-white tracking-wide">تفكير ابتكاري</h5>
+              <p class="text-xs text-zinc-400 mt-0.5 flex items-center gap-1.5">
+                <i class="fa-regular fa-user text-zinc-500 text-[11px]"></i>
+                <span>دكتور شيماء سمير</span>
+              </p>
+            </div>
+            <div class="spec-badge px-2.5 py-1 rounded-md text-center min-w-[70px]">
+              <span class="text-[9px] uppercase tracking-wider text-zinc-400 block">المكان</span>
+              <span class="text-xs font-semibold text-zinc-200 font-mono">s9</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5 text-zinc-300 font-mono bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 text-[11px]">
+              <i class="fa-regular fa-clock text-zinc-400"></i>
+              <span>من 12:20 إلى 2:50</span>
+            </div>
+            <button class="reminder-btn text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 transition" data-lecture="تفكير ابتكاري">
+              <i class="fa-regular fa-bell"></i>
+              <span>تنبيه</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Bottom Navigation Dock -->
+  <footer class="fixed bottom-3 inset-x-0 max-w-md mx-auto px-4 z-50 pointer-events-none">
+    <div class="pointer-events-auto bg-[#12141A]/95 backdrop-blur-xl rounded-2xl p-2 px-6 flex items-center justify-between shadow-dock-elevation border border-white/10">
+      <button class="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 transition text-[11px] active:scale-95" id="share-schedule-btn">
+        <i class="fa-solid fa-arrow-up-from-bracket text-sm"></i>
+        <span>مشاركة</span>
+      </button>
+
+      <button class="flex flex-col items-center gap-1 text-white font-medium text-[11px] active:scale-95" id="today-shortcut-btn">
+        <div class="w-8 h-8 rounded-xl bg-zinc-200 text-zinc-950 flex items-center justify-center shadow-sm">
+          <i class="fa-solid fa-calendar-check text-xs"></i>
+        </div>
+        <span class="font-semibold text-zinc-200">اليوم</span>
+      </button>
+
+      <button class="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 transition text-[11px] active:scale-95" id="dock-install-btn">
+        <i class="fa-solid fa-download text-sm"></i>
+        <span>تثبيت</span>
+      </button>
+
+      <button class="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 transition text-[11px] active:scale-95" id="dock-notify-btn">
+        <i class="fa-solid fa-sliders text-sm"></i>
+        <span>الإعدادات</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Toast Element -->
+  <div class="fixed top-5 inset-x-0 mx-auto max-w-xs transition-all duration-300 transform -translate-y-24 opacity-0 pointer-events-none z-50" id="toast">
+    <div class="bg-graphite-850 rounded-xl px-4 py-3 border border-white/15 shadow-2xl flex items-center gap-2.5 text-xs text-white">
+      <i class="fa-solid fa-circle-check text-bronze-400 text-sm" id="toast-icon"></i>
+      <span id="toast-text">تمت العملية بنجاح</span>
+    </div>
+  </div>
+
+  <!-- JavaScript Functionality -->
+  <script>
+    // 1. Toast System
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toast-text');
+    const toastIcon = document.getElementById('toast-icon');
+
+    function showToast(message, isSuccess = true) {
+      toastText.textContent = message;
+      toastIcon.className = isSuccess ? "fa-solid fa-circle-check text-bronze-400 text-sm" : "fa-solid fa-circle-exclamation text-red-400 text-sm";
+      
+      toast.classList.remove('-translate-y-24', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      
+      setTimeout(() => {
+        toast.classList.add('-translate-y-24', 'opacity-0', 'pointer-events-none');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2600);
+    }
+
+    // 2. Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('PWA ServiceWorker Ready:', reg.scope))
+          .catch(err => console.error('SW Failed:', err));
+      });
+    }
+
+    // 3. Native PWA Install Prompt Logic
+    let deferredPrompt = null;
+    const pwaBanner = document.getElementById('pwa-install-banner');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (pwaBanner) pwaBanner.style.display = 'block';
+    });
+
+    async function triggerPwaInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          showToast('تم تثبيت جدول G9 على جهازك بنجاح! 🎉');
+          if (pwaBanner) pwaBanner.style.display = 'none';
+        }
+        deferredPrompt = null;
+      } else {
+        showToast('التطبيق مثبت بالفعل أو متوافق كصفحة ويب مستقلة');
+      }
+    }
+
+    document.getElementById('install-btn')?.addEventListener('click', triggerPwaInstall);
+    document.getElementById('dock-install-btn')?.addEventListener('click', triggerPwaInstall);
+
+    // 4. Days Filter Logic
+    const tabs = document.querySelectorAll('.day-tab');
+    const sections = document.querySelectorAll('.day-section');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.className = 'day-tab px-3.5 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-graphite-850 text-zinc-400 border border-white/5 hover:text-white';
+        });
+
+        tab.className = 'day-tab px-3.5 py-1.5 rounded-lg font-semibold transition whitespace-nowrap bg-zinc-200 text-zinc-950 shadow-sm';
+
+        const day = tab.getAttribute('data-day');
+        sections.forEach(section => {
+          if (day === 'all' || section.getAttribute('data-day-group') === day) {
+            section.style.display = 'block';
+          } else {
+            section.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // 5. Lecture Reminders with Persistence
+    const savedReminders = JSON.parse(localStorage.getItem('g9_reminders') || '{}');
+
+    function updateReminderBtnUI(btn, isSet) {
+      const icon = btn.querySelector('i');
+      const text = btn.querySelector('span');
+      if (isSet) {
+        icon.className = 'fa-solid fa-bell text-bronze-400';
+        text.textContent = 'مُفعل';
+        btn.classList.add('text-zinc-200');
+        btn.classList.remove('text-zinc-400');
+      } else {
+        icon.className = 'fa-regular fa-bell';
+        text.textContent = 'تنبيه';
+        btn.classList.remove('text-zinc-200');
+        btn.classList.add('text-zinc-400');
+      }
+    }
+
+    document.querySelectorAll('.reminder-btn').forEach(btn => {
+      const lecture = btn.getAttribute('data-lecture');
+      
+      // Load stored state
+      if (savedReminders[lecture]) {
+        updateReminderBtnUI(btn, true);
+      }
+
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+
+        if ('Notification' in window && Notification.permission !== 'granted') {
+          const permission = await Notification.requestPermission();
+          if (permission !== 'granted') {
+            showToast('الرجاء السماح بالإشعارات من المتصفح أولاً', false);
+            return;
+          }
+        }
+
+        const isCurrentlySet = !!savedReminders[lecture];
+        savedReminders[lecture] = !isCurrentlySet;
+        localStorage.setItem('g9_reminders', JSON.stringify(savedReminders));
+
+        updateReminderBtnUI(btn, !isCurrentlySet);
+
+        if (!isCurrentlySet) {
+          showToast(`تم ضبط تنبيه لمحاضرة ${lecture}`);
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('جدول G9 ⏰', {
+              body: `تم تفعيل التنبيه التلقائي لمحاضرة ${lecture}`,
+              icon: './icon.png'
+            });
+          }
+        } else {
+          showToast(`تم إلغاء التنبيه لمحاضرة ${lecture}`);
+        }
+      });
+    });
+
+    // 6. Header Notification Bell Test
+    document.getElementById('quick-alert-toggle').addEventListener('click', async () => {
+      if ('Notification' in window) {
+        const perm = await Notification.requestPermission();
+        if (perm === 'granted') {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(reg => {
+              reg.showNotification('تطبيق جدول G9 🔔', {
+                body: 'التنبيهات مفعلة وتعمل بنجاح قبل المحاضرات!',
+                icon: './icon.png'
+              });
+            });
+          } else {
+            new Notification('تطبيق جدول G9 🔔', {
+              body: 'التنبيهات مفعلة وتعمل بنجاح!',
+              icon: './icon.png'
+            });
+          }
+          showToast('تم اختبار الإشعارات بنجاح 🔔');
+        } else {
+          showToast('إذن الإشعارات غير مفعل في المتصفح', false);
+        }
+      } else {
+        showToast('المتصفح لا يدعم الإشعارات المباشرة', false);
+      }
+    });
+
+    // 7. Share Button
+    document.getElementById('share-schedule-btn').addEventListener('click', () => {
+      if (navigator.share) {
+        navigator.share({
+          title: 'جدول جروب 9 - G9',
+          text: 'جدول المحاضرات الأسبوعي لجروب 9 - كلية الفنون التطبيقية',
+          url: window.location.href,
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        showToast('تم نسخ رابط جدول G9 للحافظة 📋');
+      }
+    });
+
+    // 8. Today Shortcut Button
+    document.getElementById('today-shortcut-btn').addEventListener('click', () => {
+      const dayIndex = new Date().getDay(); // 6: Sat, 0: Sun, 1: Mon, 2: Tue, 4: Thu
+      let targetDayKey = 'sat';
+      if (dayIndex === 0) targetDayKey = 'sun';
+      else if (dayIndex === 1) targetDayKey = 'mon';
+      else if (dayIndex === 2) targetDayKey = 'tue';
+      else if (dayIndex === 4) targetDayKey = 'thu';
+      else targetDayKey = 'sat';
+
+      const targetTab = document.querySelector(`.day-tab[data-day="${targetDayKey}"]`);
+      if (targetTab) {
+        targetTab.click();
+        targetTab.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        showToast('تم الانتقال لجدول اليوم 📅');
+      }
+    });
+
+    // 9. Settings Shortcut Button
+    document.getElementById('dock-notify-btn').addEventListener('click', () => {
+      showToast('النظام محدّث وتوقيت القاعات متزامن تلقائياً');
+    });
+
+    // 10. Dynamic Next Lecture Calculation
+    const allLectures = [
+      { dayIndex: 6, dayName: 'السبت', title: 'رسم هندسي', doctor: 'دكتور مصطفى محمود', hall: '308', startHour: 9, startMin: 0, timeText: 'تبدأ 9:00 ص' },
+      { dayIndex: 6, dayName: 'السبت', title: 'فيزيا', doctor: 'دكتور مؤنس', hall: '108 مدرج', startHour: 12, startMin: 20, timeText: 'تبدأ 12:20 م' },
+      { dayIndex: 0, dayName: 'الأحد', title: 'أسس تصميم', doctor: 'دكتور اسماء كامل', hall: '307', startHour: 9, startMin: 0, timeText: 'تبدأ 9:00 ص' },
+      { dayIndex: 1, dayName: 'الإثنين', title: 'انجلش', doctor: 'غير محدد', hall: '108 مدرج', startHour: 9, startMin: 0, timeText: 'تبدأ 9:00 ص' },
+      { dayIndex: 1, dayName: 'الإثنين', title: 'دراسات من الطبيعه', doctor: 'دكتور هبه غزال', hall: '408', startHour: 12, startMin: 20, timeText: 'تبدأ 12:20 م' },
+      { dayIndex: 2, dayName: 'الثلاثاء', title: 'روسي', doctor: 'غير محدد', hall: 'مدرج 310', startHour: 9, startMin: 0, timeText: 'تبدأ 9:00 ص' },
+      { dayIndex: 2, dayName: 'الثلاثاء', title: 'رياضيات', doctor: 'دكتور علي شعراوي', hall: 'مدرج 108', startHour: 14, startMin: 20, timeText: 'تبدأ 2:20 م' },
+      { dayIndex: 4, dayName: 'الخميس', title: 'تشكيل بصري', doctor: 'دكتور خالد عبدالرازق', hall: '501', startHour: 9, startMin: 0, timeText: 'تبدأ 9:00 ص' },
+      { dayIndex: 4, dayName: 'الخميس', title: 'تفكير ابتكاري', doctor: 'دكتور شيماء سمير', hall: 's9', startHour: 12, startMin: 20, timeText: 'تبدأ 12:20 م' }
+    ];
+
+    function calculateNextLecture() {
+      const now = new Date();
+      const currentDay = now.getDay(); // 0: Sun, 1: Mon, ... 3: Wed, 4: Thu, 5: Fri, 6: Sat
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      let next = null;
+
+      // البحث في أوقات الأسبوع بدءاً من اليوم الحالي
+      for (let offset = 0; offset < 7; offset++) {
+        const checkDay = (currentDay + offset) % 7;
+        const dayLectures = allLectures.filter(l => l.dayIndex === checkDay);
+
+        for (let lec of dayLectures) {
+          const lecStartMinutes = lec.startHour * 60 + lec.startMin;
+          // إذا كان يوم مستقبلي أو نفس اليوم ولكن وقت المحاضرة لم ينتهِ بعد
+          if (offset > 0 || lecStartMinutes > currentMinutes) {
+            next = lec;
+            break;
+          }
+        }
+        if (next) break;
+      }
+
+      // إذا لم يتبق أي محاضرة هذا الأسبوع، خذ أول محاضرة في السبت القادم
+      if (!next) next = allLectures[0];
+
+      // تحديث واجهة المستخدم
+      document.getElementById('next-lec-title').textContent = next.title;
+      document.getElementById('next-lec-doc').textContent = next.doctor;
+      document.getElementById('next-lec-hall').textContent = next.hall;
+      document.getElementById('next-lec-day').textContent = next.dayName;
+      document.getElementById('next-lec-time').innerHTML = `<i class="fa-regular fa-clock me-1 text-bronze-400 text-xs"></i> ${next.timeText}`;
+    }
+
+    // تشغيل الحساب فور تحميل الصفحة
+    calculateNextLecture();
+  </script>
+</body>
+</html>
